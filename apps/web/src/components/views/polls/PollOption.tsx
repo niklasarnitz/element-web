@@ -57,7 +57,7 @@ const ActivePollOption: React.FC<Omit<PollOptionProps, "totalVoteCount"> & { chi
     children,
     answer,
     onOptionSelected,
-    maxSelections,
+    maxSelections = 1,
 }) => {
     let ariaLabel: string;
 
@@ -80,7 +80,7 @@ const ActivePollOption: React.FC<Omit<PollOptionProps, "totalVoteCount"> & { chi
         });
     }
 
-    if ((maxSelections ?? 1) > 1) {
+    if (maxSelections > 1) {
         return (
             <StyledCheckbox
                 className="mx_PollOption_live-option"
@@ -129,11 +129,20 @@ export const PollOption: React.FC<PollOptionProps> = ({
         mx_PollOption: true,
         mx_PollOption_checked: isChecked,
         mx_PollOption_ended: isEnded,
+        mx_PollOption_multiSelect: (maxSelections ?? 1) > 1,
     });
     const isWinner = isEnded && isChecked;
     const answerPercent = totalVoteCount === 0 ? 0 : Math.round((100.0 * voteCount) / totalVoteCount);
     return (
-        <div data-testid={`pollOption-${answer.id}`} className={cls} onClick={() => onOptionSelected?.(answer.id)}>
+        <div
+            data-testid={`pollOption-${answer.id}`}
+            className={cls}
+            onClick={(event) => {
+                // The control's onChange handles both input and label clicks.
+                if (event.target instanceof Element && event.target.closest(".mx_PollOption_live-option")) return;
+                onOptionSelected?.(answer.id);
+            }}
+        >
             <ActivePollOption
                 pollId={pollId}
                 answer={answer}

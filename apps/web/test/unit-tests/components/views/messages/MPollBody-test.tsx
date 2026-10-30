@@ -883,11 +883,11 @@ describe("MPollBody", () => {
             const votes: MatrixEvent[] = [];
             const renderResult = await newMPollBodyMultiSelect(votes, 2);
 
-            clickOption(renderResult, "pizza");
+            fireEvent.click(renderResult.getByRole("checkbox", { name: "Option 1, Pizza" }));
             expect(mockClient.sendEvent).toHaveBeenCalledTimes(1);
             expect(mockClient.sendEvent).toHaveBeenCalledWith(...expectedMultiResponseEventCall(["pizza"]));
 
-            clickOption(renderResult, "wings");
+            fireEvent.click(renderResult.getByText("Wings"));
             expect(mockClient.sendEvent).toHaveBeenCalledTimes(2);
             expect(mockClient.sendEvent).toHaveBeenCalledWith(...expectedMultiResponseEventCall(["pizza", "wings"]));
         });

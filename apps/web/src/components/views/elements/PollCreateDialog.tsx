@@ -135,8 +135,12 @@ export default class PollCreateDialog extends ScrollableBaseModal<IProps, IState
         });
     };
 
+    private getNonEmptyOptions(): string[] {
+        return this.state.options.map((option) => option.trim()).filter((option) => !!option);
+    }
+
     private createEvent(): IPartialEvent<object> {
-        const nonEmptyOptions = this.state.options.map((a) => a.trim()).filter((a) => !!a);
+        const nonEmptyOptions = this.getNonEmptyOptions();
         const clampedMaxSelections = Math.max(1, Math.min(this.state.maxSelections, nonEmptyOptions.length));
         const pollStart = PollStartEvent.from(
             this.state.question.trim(),
@@ -264,7 +268,7 @@ export default class PollCreateDialog extends ScrollableBaseModal<IProps, IState
                     type="number"
                     value={String(this.state.maxSelections)}
                     min={1}
-                    max={this.state.options.filter((o) => o.trim().length > 0).length || 1}
+                    max={this.getNonEmptyOptions().length || 1}
                     label={_t("poll|max_selections_label")}
                     onChange={this.onMaxSelectionsChange}
                     disabled={this.state.busy}
